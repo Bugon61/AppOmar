@@ -2,11 +2,16 @@ package com.example.appomar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,19 +33,10 @@ public class PrincipalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+        createNotificationChannel();
 
+        //Establecer los datos del usuario
         SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
-
-        /*boolean login = preferences.getBoolean("login", Boolean.parseBoolean(""));
-        if(!login){
-            SharedPreferences preferencias = getSharedPreferences("datos", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferencias.edit();
-            editor.putString("user", "");
-            editor.putBoolean("login", false);
-            editor.commit();
-            Intent irLogin = new Intent(this, MainActivity.class);
-            startActivity(irLogin);
-        }*/
 
         bienvenida = (TextView)findViewById(R.id.txt_bienvenida);
         nombre = (TextView) findViewById(R.id.txt_nombre);
@@ -54,7 +50,7 @@ public class PrincipalActivity extends AppCompatActivity {
 
         String endpoint = "https://omarbugon.com/datos";
         String[] credenciales = {usuario.trim(), endpoint};
-        PrincipalActivity.API api = new PrincipalActivity.API();
+        API api = new API();
         api.execute(credenciales);
     }
 
@@ -117,5 +113,34 @@ public class PrincipalActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "canal";
+            String description = "descripcion";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("12345", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public void notificacion(View view){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "12345")
+                .setSmallIcon(R.drawable.buttonshapewhitebg)
+                .setContentTitle("Notificacion AppOmar")
+                .setContentText("Esta es una notificacion de AppOmar")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(12345, builder.build());
     }
 }

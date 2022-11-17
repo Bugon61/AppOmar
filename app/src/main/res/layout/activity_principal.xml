@@ -56,6 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
         android:layout_marginTop="208dp"
+        android:onClick="notificacion"
         android:text="Notificacion"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida"
