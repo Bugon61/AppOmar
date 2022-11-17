@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AppOmar</string>
+    <string name="usuario">Usuario</string>
+    <string name="contraseña">Contraseña</string>
+    <string name="acceder">Acceder</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="contraseña2">Repetir Contraseña</string>
+    <string name="email">Email</string>
+    <string name="nacimiento">Fecha de Nacimiento</string>
+</resources>
