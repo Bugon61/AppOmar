@@ -31,6 +31,16 @@ public class PrincipalActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
 
+        /*boolean login = preferences.getBoolean("login", Boolean.parseBoolean(""));
+        if(!login){
+            SharedPreferences preferencias = getSharedPreferences("datos", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferencias.edit();
+            editor.putString("user", "");
+            editor.putBoolean("login", false);
+            editor.commit();
+            Intent irLogin = new Intent(this, MainActivity.class);
+            startActivity(irLogin);
+        }*/
 
         bienvenida = (TextView)findViewById(R.id.txt_bienvenida);
         nombre = (TextView) findViewById(R.id.txt_nombre);

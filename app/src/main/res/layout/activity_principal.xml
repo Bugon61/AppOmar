@@ -47,15 +47,16 @@
         android:layout_marginTop="208dp"
         android:onClick="cerrarSesion"
         android:text="Cerrar Sesion"
-        app:layout_constraintStart_toEndOf="@+id/button2"
+        app:layout_constraintStart_toEndOf="@+id/buttonNotify"
         app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonNotify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
         android:layout_marginTop="208dp"
+        android:onClick="notificacion"
         android:text="Notificacion"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida"
