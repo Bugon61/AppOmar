@@ -1,13 +1,23 @@
 package com.example.appomar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,18 +39,8 @@ public class PrincipalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
+        //Establecer los datos
         SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
-
-        /*boolean login = preferences.getBoolean("login", Boolean.parseBoolean(""));
-        if(!login){
-            SharedPreferences preferencias = getSharedPreferences("datos", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferencias.edit();
-            editor.putString("user", "");
-            editor.putBoolean("login", false);
-            editor.commit();
-            Intent irLogin = new Intent(this, MainActivity.class);
-            startActivity(irLogin);
-        }*/
 
         bienvenida = (TextView)findViewById(R.id.txt_bienvenida);
         nombre = (TextView) findViewById(R.id.txt_nombre);
@@ -56,6 +56,20 @@ public class PrincipalActivity extends AppCompatActivity {
         String[] credenciales = {usuario.trim(), endpoint};
         PrincipalActivity.API api = new PrincipalActivity.API();
         api.execute(credenciales);
+
+        //Notificacion
+        NotificationChannel channel = new NotificationChannel("Notificacion", "Notificacion", NotificationManager.IMPORTANCE_DEFAULT);
+
+        Uri uri = Uri.parse("android.resource://"+this.getPackageName()+"/" + R.raw.audio);
+        AudioAttributes att = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
+        channel.setSound(uri, att);
+
+        NotificationManager manager = getSystemService(NotificationManager.class);
+
+        manager.createNotificationChannel(channel);
+
     }
 
     public void cerrarSesion(View view){
@@ -117,5 +131,18 @@ public class PrincipalActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void notificacion(View view){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(PrincipalActivity.this, "Notificacion");
+        builder.setContentTitle("Notificacion");
+        builder.setContentText("Esto es una notificacion para AppOmar");
+        builder.setSmallIcon(R.mipmap.ic_launcher_foreground);
+        builder.setAutoCancel(true);
+
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(PrincipalActivity.this);
+        managerCompat.notify(1,builder.build());
+
     }
 }
