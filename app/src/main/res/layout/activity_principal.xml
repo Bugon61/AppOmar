@@ -43,8 +43,8 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="208dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="160dp"
         android:onClick="cerrarSesion"
         android:text="Cerrar Sesion"
         app:layout_constraintStart_toEndOf="@+id/buttonNotify"
@@ -54,8 +54,8 @@
         android:id="@+id/buttonNotify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="208dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="160dp"
         android:onClick="notificacion"
         android:text="Notificacion"
         app:layout_constraintStart_toStartOf="parent"
@@ -125,5 +125,41 @@
         android:shadowRadius="2"
         android:textColor="@color/light_font"
         android:textColorHint="@color/light_font"/>
+
+    <Button
+        android:id="@+id/buttonAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="28dp"
+        android:onClick="notificacion"
+        android:text="Admin"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonNotify" />
+
+    <Button
+        android:id="@+id/buttonEditar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="28dp"
+        android:onClick="notificacion"
+        android:text="Editar"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/buttonAdmin"
+        app:layout_constraintTop_toBottomOf="@+id/buttonNotify" />
+
+    <Button
+        android:id="@+id/buttonEliminar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="28dp"
+        android:onClick="notificacion"
+        android:text="Eliminar"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/buttonEditar"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

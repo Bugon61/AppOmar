@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 public class PrincipalActivity extends AppCompatActivity {
 
     private TextView bienvenida, nombre, email, fecha, nacion;
+    private Button admin, editar, eliminar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,9 @@ public class PrincipalActivity extends AppCompatActivity {
         email = (TextView) findViewById(R.id.txt_email);
         nacion = (TextView)findViewById(R.id.txt_nacion);
         fecha = (TextView)findViewById(R.id.txt_fecha);
+        admin = (Button)findViewById(R.id.buttonAdmin);
+        editar = (Button)findViewById(R.id.buttonEditar);
+        eliminar = (Button)findViewById(R.id.buttonEliminar);
 
         nombre.setText(preferences.getString("user", ""));
 
@@ -56,6 +60,12 @@ public class PrincipalActivity extends AppCompatActivity {
         String[] credenciales = {usuario.trim(), endpoint};
         PrincipalActivity.API api = new PrincipalActivity.API();
         api.execute(credenciales);
+
+        //Verificar Admin
+        String endpointAdmin = "https://omarbugon.com/admin";
+        String[] credencialesAdmin = {usuario.trim(), endpointAdmin};
+        PrincipalActivity.apiAdmin apiAdmin = new PrincipalActivity.apiAdmin();
+        apiAdmin.execute(credencialesAdmin);
 
         //Notificacion
         NotificationChannel channel = new NotificationChannel("Notificacion", "Notificacion", NotificationManager.IMPORTANCE_DEFAULT);
@@ -82,6 +92,7 @@ public class PrincipalActivity extends AppCompatActivity {
         startActivity(irLogin);
     }
 
+    //API par conseguir datos
     private class API extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... credenciales) {
@@ -127,7 +138,61 @@ public class PrincipalActivity extends AppCompatActivity {
 
 
             } catch (Exception e) {
-                Toast.makeText(PrincipalActivity.this, "error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PrincipalActivity.this, "error1", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //API par verificar admin
+    private class apiAdmin extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... credenciales) {
+            String respuesta = "bien";
+            String username = credenciales[0];
+            String endpoint = credenciales[1];
+            try {
+                URL url = new URL(endpoint);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "*/*");
+                conn.setDoOutput(true);
+                String payload = "{\n   \"user\" : \"" + username + "\"}";
+                try (OutputStream os = conn.getOutputStream()) {
+                    byte[] input = payload.getBytes(StandardCharsets.UTF_8);
+                    os.write(input, 0, input.length);
+                }
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+                    StringBuilder resp = new StringBuilder();
+                    String respLine = null;
+                    while ((respLine = br.readLine()) != null) {
+                        resp.append(respLine.toString());
+                    }
+                    respuesta = resp.toString();
+                }
+            } catch (Exception e) {
+                respuesta = "wer";
+                e.printStackTrace();
+            }
+            return respuesta;
+        }
+
+
+        @Override
+        protected void onPostExecute(String respuesta) {
+            try {
+                JSONObject json = new JSONObject(respuesta);
+
+                //Toast.makeText(PrincipalActivity.this, respuesta, Toast.LENGTH_SHORT).show();
+                if(json.getInt("codigo") == 411){
+                    admin.setVisibility(View.VISIBLE);
+                    editar.setVisibility(View.VISIBLE);
+                    eliminar.setVisibility(View.VISIBLE);
+                }
+
+            } catch (Exception e) {
+                Toast.makeText(PrincipalActivity.this, "errorwsx", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
