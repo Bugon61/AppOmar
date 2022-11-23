@@ -24,6 +24,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -303,7 +306,9 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
         builder.setContentText("Esto es una notificacion para AppOmar");
         builder.setSmallIcon(R.mipmap.ic_launcher_foreground);
         builder.setAutoCancel(true);
-
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.audio);
+        Ringtone r = RingtoneManager.getRingtone(PrincipalActivity.this, uri);
+        r.play();
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(PrincipalActivity.this);
         managerCompat.notify(1,builder.build());
