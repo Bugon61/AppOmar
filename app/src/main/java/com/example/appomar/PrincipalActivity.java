@@ -1,17 +1,28 @@
 package com.example.appomar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,16 +35,33 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Locale;
 
-public class PrincipalActivity extends AppCompatActivity {
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
+
 
     private TextView bienvenida, nombre, email, fecha, nacion;
     private Button admin, editar, eliminar;
+    private GoogleMap mMap;
+    double latitud, longitud;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +71,14 @@ public class PrincipalActivity extends AppCompatActivity {
         //Establecer los datos
         SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
 
-        bienvenida = (TextView)findViewById(R.id.txt_bienvenida);
+        bienvenida = (TextView) findViewById(R.id.txt_bienvenida);
         nombre = (TextView) findViewById(R.id.txt_nombre);
         email = (TextView) findViewById(R.id.txt_email);
-        nacion = (TextView)findViewById(R.id.txt_nacion);
-        fecha = (TextView)findViewById(R.id.txt_fecha);
-        admin = (Button)findViewById(R.id.buttonAdmin);
-        editar = (Button)findViewById(R.id.buttonEditar);
-        eliminar = (Button)findViewById(R.id.buttonEliminar);
+        nacion = (TextView) findViewById(R.id.txt_nacion);
+        fecha = (TextView) findViewById(R.id.txt_fecha);
+        admin = (Button) findViewById(R.id.buttonAdmin);
+        editar = (Button) findViewById(R.id.buttonEditar);
+        eliminar = (Button) findViewById(R.id.buttonEliminar);
 
         nombre.setText(preferences.getString("user", ""));
 
@@ -70,7 +98,7 @@ public class PrincipalActivity extends AppCompatActivity {
         //Notificacion
         NotificationChannel channel = new NotificationChannel("Notificacion", "Notificacion", NotificationManager.IMPORTANCE_DEFAULT);
 
-        Uri uri = Uri.parse("android.resource://"+this.getPackageName()+"/" + R.raw.audio);
+        Uri uri = Uri.parse("android.resource://" + this.getPackageName() + "/" + R.raw.audio);
         AudioAttributes att = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                 .build();
@@ -79,6 +107,11 @@ public class PrincipalActivity extends AppCompatActivity {
         NotificationManager manager = getSystemService(NotificationManager.class);
 
         manager.createNotificationChannel(channel);
+
+        //MAPA
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.maps);
+        mapFragment.getMapAsync(this);
+
 
     }
 
@@ -90,6 +123,72 @@ public class PrincipalActivity extends AppCompatActivity {
         editor.commit();
         Intent irLogin = new Intent(this, MainActivity.class);
         startActivity(irLogin);
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED){
+            retrievedLocation();
+        } else{
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
+        }
+
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(latitud, longitud);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15));
+
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private void retrievedLocation() {
+        LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5,
+            this);
+
+        Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if(location != null){
+            latitud = location.getLatitude();
+            longitud = location.getLongitude();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == 200 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            retrievedLocation();
+        } else{
+            latitud = Double.parseDouble("Permission Denied");
+            longitud = Double.parseDouble("Permission Denied");
+        }
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        LocationListener.super.onStatusChanged(provider, status, extras);
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+        LocationListener.super.onProviderEnabled(provider);
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+        LocationListener.super.onProviderDisabled(provider);
     }
 
     //API par conseguir datos
