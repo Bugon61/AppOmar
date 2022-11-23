@@ -138,7 +138,7 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(latitud, longitud);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Tu Ubicacion Actual"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15));
 
     }
