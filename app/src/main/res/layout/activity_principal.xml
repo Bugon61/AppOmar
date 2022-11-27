@@ -94,7 +94,7 @@
         android:id="@+id/txt_fecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:shadowColor="@color/text_shadow"
         android:shadowDx="1"
