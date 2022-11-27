@@ -1,6 +1,7 @@
 package com.example.appomar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -17,6 +18,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -30,15 +33,21 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -56,6 +65,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
@@ -64,6 +74,10 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
     private Button admin, editar, eliminar;
     private GoogleMap mMap;
     double latitud, longitud;
+    private ImageView perfil;
+    String foto;
+    Uri uriPerfil;
+    private final int GALLERY_REQ_CODE = 1000;
 
 
     @Override
@@ -89,13 +103,13 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
 
         String endpoint = "https://omarbugon.com/datos";
         String[] credenciales = {usuario.trim(), endpoint};
-        PrincipalActivity.API api = new PrincipalActivity.API();
+        API api = new API();
         api.execute(credenciales);
 
         //Verificar Admin
         String endpointAdmin = "https://omarbugon.com/admin";
         String[] credencialesAdmin = {usuario.trim(), endpointAdmin};
-        PrincipalActivity.apiAdmin apiAdmin = new PrincipalActivity.apiAdmin();
+        apiAdmin apiAdmin = new apiAdmin();
         apiAdmin.execute(credencialesAdmin);
 
         //Notificacion
@@ -115,7 +129,60 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.maps);
         mapFragment.getMapAsync(this);
 
+        //Foto
+        perfil = findViewById(R.id.imagePerfil);
 
+        /*try {
+            uriPerfil = Uri.parse(preferences.getString("foto", ""));
+            perfil.setImageURI(uriPerfil);
+        } catch (Exception e){
+            Toast.makeText(this, "errorFoto", Toast.LENGTH_SHORT).show();
+        }*/
+    }
+
+    public void foto(View view){
+        Intent iGallery = new Intent(Intent.ACTION_PICK);
+        iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(iGallery, GALLERY_REQ_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode==RESULT_OK){
+            if (requestCode==GALLERY_REQ_CODE){
+                //Para la galeria
+                uriPerfil = data.getData();
+                perfil.setImageURI(uriPerfil);
+
+                /*SharedPreferences preferencias = getSharedPreferences("datos", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferencias.edit();
+
+                editor.putString("foto", uriPerfil.toString());
+                editor.commit();
+                finish();*/
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uriPerfil);
+
+                    ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+                    byte [] b=baos.toByteArray();
+                    String temp=Base64.encodeToString(b, Base64.DEFAULT);
+
+                    SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
+                    String usuario = preferences.getString("user", "");
+                    String endpointFoto = "https://omarbugon.com/fotoGuardar";
+                    String[] credencialesAdmin = {usuario.trim(), temp, endpointFoto};
+                    apiFotoGuardar apiFotoGuardar = new apiFotoGuardar();
+                    apiFotoGuardar.execute(credencialesAdmin);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //startActivity(getIntent());
+            }
+        }
     }
 
     public void cerrarSesion(View view){
@@ -168,6 +235,9 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
 
         if(requestCode == 200 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
             retrievedLocation();
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
         } else{
             latitud = Double.parseDouble("Permission Denied");
             longitud = Double.parseDouble("Permission Denied");
@@ -237,10 +307,25 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
                 email.setText(json.getString("email"));
                 fecha.setText(json.getString("fecha"));
                 nacion.setText(json.getString("nacion"));
+                foto = json.getString("foto");
+
+                try{
+                    /*byte [] encodeByte = Base64.decode(foto,Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                    perfil.setImageBitmap(bitmap);*/
+                    byte[] decodedString = Base64.decode(foto ,Base64.DEFAULT);
+                    InputStream inputStream  = new ByteArrayInputStream(decodedString);
+                    Bitmap bitmap  = BitmapFactory.decodeStream(inputStream);
+                    perfil.setImageBitmap(bitmap);
+                    Toast.makeText(PrincipalActivity.this, "bit: " + bitmap.toString(), Toast.LENGTH_SHORT).show();
+                }
+                catch(Exception e){
+
+                }
 
 
             } catch (Exception e) {
-                Toast.makeText(PrincipalActivity.this, "error1", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PrincipalActivity.this, "errorDatos", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
@@ -313,5 +398,56 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(PrincipalActivity.this);
         managerCompat.notify(1,builder.build());
 
+    }
+
+    //API para guardar la foto
+    private class apiFotoGuardar extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... credenciales) {
+            String respuesta = "bien";
+            String username = credenciales[0];
+            String uri = credenciales[1];
+            String endpoint = credenciales[2];
+            try {
+                URL url = new URL(endpoint);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "*/*");
+                conn.setDoOutput(true);
+                String payload = "{\n   \"user\" : \"" + username + "\", \"uri\" : \"" + uri + "\"}";
+                try (OutputStream os = conn.getOutputStream()) {
+                    byte[] input = payload.getBytes(StandardCharsets.UTF_8);
+                    os.write(input, 0, input.length);
+                }
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+                    StringBuilder resp = new StringBuilder();
+                    String respLine = null;
+                    while ((respLine = br.readLine()) != null) {
+                        resp.append(respLine.toString());
+                    }
+                    respuesta = resp.toString();
+                }
+            } catch (Exception e) {
+                respuesta = "wer";
+                e.printStackTrace();
+            }
+            return respuesta;
+        }
+
+
+        @Override
+        protected void onPostExecute(String respuesta) {
+            try {
+                //JSONObject json = new JSONObject(respuesta);
+
+                //Toast.makeText(PrincipalActivity.this, respuesta, Toast.LENGTH_SHORT).show();
+
+
+            } catch (Exception e) {
+                Toast.makeText(PrincipalActivity.this, "errorFoto", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
     }
 }

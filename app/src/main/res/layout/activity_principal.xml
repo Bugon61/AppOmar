@@ -26,7 +26,7 @@
         android:id="@+id/txt_bienvenida"
         android:layout_width="121dp"
         android:layout_height="38dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="28dp"
         android:shadowColor="@color/text_shadow"
         android:shadowDx="1"
         android:shadowDy="1"
@@ -36,101 +36,105 @@
         android:textColorHint="@color/light_font"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button"
+    <TextView
+        android:id="@+id/txt_nombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="160dp"
-        android:onClick="cerrarSesion"
-        android:text="Cerrar Sesion"
-        app:layout_constraintStart_toEndOf="@+id/buttonNotify"
+        android:layout_marginTop="52dp"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="TextView"
+        android:textColor="@color/light_font"
+        android:textColorHint="@color/light_font"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.423"
+        app:layout_constraintStart_toEndOf="@+id/imagePerfil"
         app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida" />
+
+    <TextView
+        android:id="@+id/txt_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="TextView"
+        android:textColor="@color/light_font"
+        android:textColorHint="@color/light_font"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.423"
+        app:layout_constraintStart_toEndOf="@+id/imagePerfil"
+        app:layout_constraintTop_toBottomOf="@+id/txt_nombre" />
+
+    <TextView
+        android:id="@+id/txt_nacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="32dp"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="TextView"
+        android:textColor="@color/light_font"
+        android:textColorHint="@color/light_font"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
+
+    <TextView
+        android:id="@+id/txt_fecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="32dp"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="TextView"
+        android:textColor="@color/light_font"
+        android:textColorHint="@color/light_font"
+        app:layout_constraintStart_toEndOf="@+id/txt_nacion"
+        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
 
     <Button
         android:id="@+id/buttonNotify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="208dp"
         android:onClick="notificacion"
         android:text="Notificacion"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida"
         tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/txt_nombre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida"
-        android:shadowColor="@color/text_shadow"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:textColor="@color/light_font"
-        android:textColorHint="@color/light_font"/>
-
-    <TextView
-        android:id="@+id/txt_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_nombre"
-        android:shadowColor="@color/text_shadow"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:textColor="@color/light_font"
-        android:textColorHint="@color/light_font"/>
-
-    <TextView
-        android:id="@+id/txt_nacion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_email"
-        android:shadowColor="@color/text_shadow"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:textColor="@color/light_font"
-        android:textColorHint="@color/light_font"/>
-
-    <TextView
-        android:id="@+id/txt_fecha"
+    <Button
+        android:id="@+id/buttonEliminar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/txt_nacion"
-        app:layout_constraintTop_toBottomOf="@+id/txt_email"
-        android:shadowColor="@color/text_shadow"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:textColor="@color/light_font"
-        android:textColorHint="@color/light_font"/>
+        android:layout_marginTop="28dp"
+        android:onClick="notificacion"
+        android:text="Eliminar"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/buttonEditar"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <Button
         android:id="@+id/buttonAdmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="28dp"
         android:onClick="notificacion"
         android:text="Admin"
@@ -139,28 +143,27 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonNotify" />
 
     <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="208dp"
+        android:onClick="cerrarSesion"
+        android:text="Cerrar Sesion"
+        app:layout_constraintStart_toEndOf="@+id/buttonNotify"
+        app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida" />
+
+    <Button
         android:id="@+id/buttonEditar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
         android:onClick="notificacion"
         android:text="Editar"
         android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/buttonAdmin"
         app:layout_constraintTop_toBottomOf="@+id/buttonNotify" />
-
-    <Button
-        android:id="@+id/buttonEliminar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="28dp"
-        android:onClick="notificacion"
-        android:text="Eliminar"
-        android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@+id/buttonEditar"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/maps"
@@ -171,5 +174,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+    <ImageView
+        android:id="@+id/imagePerfil"
+        android:layout_width="147dp"
+        android:layout_height="147dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:clickable="true"
+        android:onClick="foto"
+        app:layout_constraintBottom_toBottomOf="@+id/imagePerfil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

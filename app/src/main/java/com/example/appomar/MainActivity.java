@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (Exception e)
             {
-                Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "errorLogin", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
