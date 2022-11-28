@@ -108,10 +108,10 @@
 
     <Button
         android:id="@+id/buttonNotify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="208dp"
+        android:layout_width="318dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="196dp"
         android:onClick="notificacion"
         android:text="Notificacion"
         app:layout_constraintStart_toStartOf="parent"
@@ -122,13 +122,13 @@
         android:id="@+id/buttonEliminar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="28dp"
         android:onClick="notificacion"
         android:text="Eliminar"
         android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/buttonEditar"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonNotify" />
 
     <Button
         android:id="@+id/buttonAdmin"
@@ -141,17 +141,6 @@
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonNotify" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="208dp"
-        android:onClick="cerrarSesion"
-        android:text="Cerrar Sesion"
-        app:layout_constraintStart_toEndOf="@+id/buttonNotify"
-        app:layout_constraintTop_toBottomOf="@+id/txt_bienvenida" />
 
     <Button
         android:id="@+id/buttonEditar"
@@ -197,5 +186,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <ImageButton
+        android:layout_width="62dp"
+        android:layout_height="49dp"
+        android:background="#FF5722"
+        android:contentDescription="Menu"
+        android:onClick="showPopup"
+        android:src="@android:drawable/ic_menu_more"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

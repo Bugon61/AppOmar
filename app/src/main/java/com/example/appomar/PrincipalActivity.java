@@ -7,11 +7,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.IconCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -20,14 +18,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -35,9 +29,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,21 +51,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Locale;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
+public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, PopupMenu.OnMenuItemClickListener {
 
 
     private TextView bienvenida, nombre, email, fecha, nacion;
@@ -78,6 +70,8 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
     String foto;
     Uri uriPerfil;
     private final int GALLERY_REQ_CODE = 1000;
+    //private Menu menu;
+    private MenuItem Iadmin, Ieditar, Ieliminar;
 
 
     @Override
@@ -96,6 +90,10 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
         admin = (Button) findViewById(R.id.buttonAdmin);
         editar = (Button) findViewById(R.id.buttonEditar);
         eliminar = (Button) findViewById(R.id.buttonEliminar);
+        /*Iadmin = menu.findItem(R.id.admin);
+        Ieditar = menu.findItem(R.id.editar);
+        Ieliminar = menu.findItem(R.id.eliminar);*/
+
 
         nombre.setText(preferences.getString("user", ""));
 
@@ -138,6 +136,18 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
         } catch (Exception e){
             Toast.makeText(this, "errorFoto", Toast.LENGTH_SHORT).show();
         }*/
+    }
+
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        popup.setOnMenuItemClickListener(this);
+        inflater.inflate(R.menu.main_menu, popup.getMenu());
+        Iadmin = popup.getMenu().findItem(R.id.admin);
+        Ieditar = popup.getMenu().findItem(R.id.editar);
+        Ieliminar = popup.getMenu().findItem(R.id.eliminar);
+        popup.show();
     }
 
     public void foto(View view){
@@ -185,7 +195,7 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
         }
     }
 
-    public void cerrarSesion(View view){
+    public void cerrarSesion(PrincipalActivity view){
         SharedPreferences preferencias = getSharedPreferences("datos", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferencias.edit();
         editor.putString("user", "");
@@ -262,6 +272,17 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onProviderDisabled(@NonNull String provider) {
         LocationListener.super.onProviderDisabled(provider);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.logout:
+                cerrarSesion(this);
+                return true;
+            default:
+                return false;
+        }
     }
 
     //API par conseguir datos
@@ -376,10 +397,14 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
                     admin.setVisibility(View.VISIBLE);
                     editar.setVisibility(View.VISIBLE);
                     eliminar.setVisibility(View.VISIBLE);
+                    Iadmin.setVisible(true);
+                    Ieditar.setVisible(true);
+                    Ieliminar.setVisible(true);
+
                 }
 
             } catch (Exception e) {
-                Toast.makeText(PrincipalActivity.this, "errorwsx", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PrincipalActivity.this, "errorAdmin", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
