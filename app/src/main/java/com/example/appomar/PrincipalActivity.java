@@ -1,5 +1,7 @@
 package com.example.appomar;
 
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -164,6 +167,8 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
             if (requestCode==GALLERY_REQ_CODE){
                 //Para la galeria
                 uriPerfil = data.getData();
+                //Toast.makeText(this, "Obteniendo imagen del galeriS", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, uriPerfil.toString(), Toast.LENGTH_SHORT).show();
                 perfil.setImageURI(uriPerfil);
 
                 /*SharedPreferences preferencias = getSharedPreferences("datos", Context.MODE_PRIVATE);
@@ -175,15 +180,20 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uriPerfil);
 
-                    ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+                    /*ByteArrayOutputStream baos=new  ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
                     byte [] b=baos.toByteArray();
-                    String temp=Base64.encodeToString(b, Base64.DEFAULT);
+                    String temp=Base64.encodeToString(b, Base64.DEFAULT);*/
+
+                    ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+                    byte [] arr=baos.toByteArray();
+                    String result=Base64.encodeToString(arr, Base64.DEFAULT);
 
                     SharedPreferences preferences = getSharedPreferences("datos", Context.MODE_PRIVATE);
                     String usuario = preferences.getString("user", "");
                     String endpointFoto = "https://omarbugon.com/fotoGuardar";
-                    String[] credencialesAdmin = {usuario.trim(), temp, endpointFoto};
+                    String[] credencialesAdmin = {usuario.trim(), result, endpointFoto};
                     apiFotoGuardar apiFotoGuardar = new apiFotoGuardar();
                     apiFotoGuardar.execute(credencialesAdmin);
                 } catch (IOException e) {
@@ -330,18 +340,31 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
                 nacion.setText(json.getString("nacion"));
                 foto = json.getString("foto");
 
-                try{
+                //Toast.makeText(PrincipalActivity.this, foto, Toast.LENGTH_SHORT).show();
+                perfil.setImageResource(R.mipmap.avatar);
+
+                if(foto.length() != 0){
+                    try{
                     /*byte [] encodeByte = Base64.decode(foto,Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
                     perfil.setImageBitmap(bitmap);*/
-                    byte[] decodedString = Base64.decode(foto ,Base64.DEFAULT);
-                    InputStream inputStream  = new ByteArrayInputStream(decodedString);
-                    Bitmap bitmap  = BitmapFactory.decodeStream(inputStream);
-                    perfil.setImageBitmap(bitmap);
-                    Toast.makeText(PrincipalActivity.this, "bit: " + bitmap.toString(), Toast.LENGTH_SHORT).show();
-                }
-                catch(Exception e){
+                        /*byte[] decodedString = Base64.decode(foto ,Base64.DEFAULT);
+                        InputStream inputStream  = new ByteArrayInputStream(decodedString);
+                        Bitmap bitmap  = BitmapFactory.decodeStream(inputStream);
+                        perfil.setImageBitmap(bitmap);*/
 
+                        byte [] encodeByte=Base64.decode(foto,Base64.DEFAULT);
+                        Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                        perfil.setImageBitmap(bitmap);
+
+                        //Toast.makeText(PrincipalActivity.this, "Lo intente", Toast.LENGTH_SHORT).show();
+                    }
+                    catch(Exception e){
+                        Toast.makeText(PrincipalActivity.this, "Error Poner la Foto", Toast.LENGTH_SHORT).show();
+                    }
+                } else{
+                    perfil.setImageResource(R.mipmap.avatar);
+                    //Toast.makeText(PrincipalActivity.this, "Imagen", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -397,9 +420,9 @@ public class PrincipalActivity extends AppCompatActivity implements OnMapReadyCa
                     admin.setVisibility(View.VISIBLE);
                     editar.setVisibility(View.VISIBLE);
                     eliminar.setVisibility(View.VISIBLE);
-                    Iadmin.setVisible(true);
+                    /*Iadmin.setVisible(true);
                     Ieditar.setVisible(true);
-                    Ieliminar.setVisible(true);
+                    Ieliminar.setVisible(true);*/
 
                 }
 
